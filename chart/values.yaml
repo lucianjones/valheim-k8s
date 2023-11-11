@@ -1,6 +1,6 @@
 worldName: example-world-name
 serverName: example-server-name
-password: password 
+password: password
 
 resources: {}
 
@@ -27,12 +27,15 @@ networking:
   gamePort: 2456
   publishQueryPort: "true"
   nodePort: 30373
-
+  annotations: {}
+  status:
+    enabled: false
+    port: 8080
+    nodePort: {}
 
 nodeSelector: {}
-  
-tolerations: {}
 
+tolerations: {}
 # If you utilize priority classes, you can define the priority class for this deployment here
 # priorityClassName: my-priority-class-name
 

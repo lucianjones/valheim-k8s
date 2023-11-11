@@ -3,6 +3,10 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
+  {{- with .Values.networking.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   ports:
   - name: gameport
@@ -21,6 +25,20 @@ spec:
     nodePort: {{ default "" (.Values.networking.nodePort | int | add 1) }}
     {{- end }}
   {{ end }}
+  {{ if .Values.networking.status.enabled }}
+  - name: statusport
+    port: {{ .Values.networking.status.port | int }}
+    targetPort: {{ .Values.networking.status.port | int }}
+    protocol: TCP
+    {{- if eq .Values.networking.serviceType "NodePort" }}
+    {{- if .Values.networking.status.nodePort }}
+    nodePort: {{ default "" (.Values.networking.status.nodePort | int ) }}
+    {{- else }}
+    nodePort: {{ default "" (.Values.networking.nodePort | int | add 2) }}
+    {{- end }}
+    {{- end }}
+  {{ end }}
+
   type: {{ .Values.networking.serviceType }}
   selector:
     app: {{ .Release.Name }}
